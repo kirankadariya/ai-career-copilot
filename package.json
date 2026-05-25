@@ -1,0 +1,9 @@
+{
+  "name": "ai-careers-copilot",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.36.3",
+    "@netlify/functions": "^2.8.1"
+  }
+}

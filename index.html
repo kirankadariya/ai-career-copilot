@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Career Copilot — Your Intelligent Job Search Companion</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: #4f46e5;
+      --primary-dark: #3730a3;
+      --primary-light: #6366f1;
+      --primary-pale: #eef2ff;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --success: #10b981;
+      --error: #ef4444;
+      --radius: 12px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+      --shadow: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04);
+      --shadow-lg: 0 10px 25px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* ── Header ── */
+    header {
+      background: linear-gradient(135deg, #1e1b4b 0%, #3730a3 55%, #4f46e5 100%);
+      padding: 52px 24px 72px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle at 20% 80%, rgba(99,102,241,0.2) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(139,92,246,0.15) 0%, transparent 50%);
+    }
+
+    header::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.025'%3E%3Cpath d='M20 20.5V18H0v5h5v5H0v5h5v4h5v-4h5v4h5v-4h5v-5h-5v-5h5v-5h-5zm-5 5h-5v-5h5v5zm5-5h-5v5h5v-5z'/%3E%3C/g%3E%3C/svg%3E");
+      opacity: 0.5;
+    }
+
+    .header-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .logo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 20px;
+    }
+
+    .logo-dot {
+      width: 6px;
+      height: 6px;
+      background: #a5b4fc;
+      border-radius: 50%;
+    }
+
+    h1 {
+      font-size: clamp(30px, 5.5vw, 52px);
+      font-weight: 800;
+      color: white;
+      letter-spacing: -0.03em;
+      line-height: 1.12;
+      margin-bottom: 16px;
+    }
+
+    h1 em {
+      font-style: normal;
+      background: linear-gradient(90deg, #a5b4fc, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .tagline {
+      font-size: 16px;
+      color: rgba(255,255,255,0.65);
+      max-width: 460px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* ── Tab nav ── */
+    .tab-wrapper {
+      max-width: 860px;
+      margin: -30px auto 0;
+      padding: 0 24px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .tabs {
+      display: flex;
+      background: white;
+      border-radius: 16px;
+      padding: 6px;
+      box-shadow: var(--shadow-lg), 0 0 0 1px rgba(0,0,0,0.04);
+      gap: 4px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 11px 12px;
+      border: none;
+      background: transparent;
+      border-radius: 11px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      white-space: nowrap;
+    }
+
+    .tab-btn:hover { color: var(--primary); background: var(--primary-pale); }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 2px 10px rgba(79,70,229,0.4);
+      font-weight: 600;
+    }
+
+    /* ── Main layout ── */
+    main {
+      max-width: 860px;
+      margin: 36px auto 60px;
+      padding: 0 24px;
+    }
+
+    .panel { display: none; }
+    .panel.active {
+      display: block;
+      animation: fadeUp 0.3s ease;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Panel header ── */
+    .panel-header {
+      margin-bottom: 28px;
+      padding-bottom: 20px;
+      border-bottom: 1.5px solid var(--border);
+    }
+
+    .panel-title {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+
+    .panel-desc {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* ── Form ── */
+    .form-group { margin-bottom: 18px; }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 7px;
+      letter-spacing: 0.01em;
+    }
+
+    textarea, input[type="text"] {
+      width: 100%;
+      padding: 13px 15px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--text);
+      background: var(--surface);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      resize: vertical;
+      line-height: 1.65;
+    }
+
+    textarea { min-height: 160px; }
+
+    textarea:focus, input[type="text"]:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+    }
+
+    textarea::placeholder, input::placeholder { color: #94a3b8; }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    /* ── Submit button ── */
+    .submit-btn {
+      width: 100%;
+      padding: 15px 24px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 4px;
+      letter-spacing: 0.01em;
+    }
+
+    .submit-btn:hover:not(:disabled) {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(79,70,229,0.38);
+    }
+
+    .submit-btn:disabled { opacity: 0.65; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    .spinner {
+      width: 17px;
+      height: 17px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Error ── */
+    .error-message {
+      display: none;
+      padding: 12px 16px;
+      background: #fef2f2;
+      border: 1.5px solid #fecaca;
+      border-radius: var(--radius);
+      color: var(--error);
+      font-size: 14px;
+      margin-top: 12px;
+    }
+
+    .error-message.visible { display: block; animation: fadeUp 0.2s ease; }
+
+    /* ── Output ── */
+    .output-section {
+      display: none;
+      margin-top: 36px;
+    }
+
+    .output-section.visible { display: block; animation: fadeUp 0.3s ease; }
+
+    .output-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .output-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .copy-btn {
+      padding: 6px 14px;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .copy-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .copy-btn.copied { background: #f0fdf4; border-color: var(--success); color: var(--success); }
+
+    .output-content {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      font-size: 15px;
+      line-height: 1.8;
+      color: var(--text);
+      min-height: 100px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      position: relative;
+    }
+
+    .output-content.streaming::after {
+      content: '▊';
+      color: var(--primary);
+      animation: blink 0.9s step-end infinite;
+      font-size: 14px;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 28px 24px;
+      font-size: 13px;
+      color: var(--text-muted);
+      border-top: 1.5px solid var(--border);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .form-row { grid-template-columns: 1fr; }
+      .tabs { flex-direction: column; }
+      .tab-btn { justify-content: flex-start; }
+      header { padding: 40px 20px 60px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo-badge"><div class="logo-dot"></div> AI Career Copilot</div>
+    <h1>Land Your <em>Dream Job</em>,<br>Faster.</h1>
+    <p class="tagline">AI-powered tools to strengthen your resume, craft compelling cover letters, and ace your next interview.</p>
+  </div>
+</header>
+
+<div class="tab-wrapper">
+  <nav class="tabs" role="tablist">
+    <button class="tab-btn active" data-panel="resume" role="tab" aria-selected="true">
+      📄 Resume Review
+    </button>
+    <button class="tab-btn" data-panel="cover-letter" role="tab" aria-selected="false">
+      ✉️ Cover Letter
+    </button>
+    <button class="tab-btn" data-panel="interview" role="tab" aria-selected="false">
+      💬 Interview Prep
+    </button>
+  </nav>
+</div>
+
+<main>
+
+  <!-- ── Resume Review ── -->
+  <div class="panel active" id="panel-resume" role="tabpanel">
+    <div class="panel-header">
+      <h2 class="panel-title">Resume Review &amp; Analysis</h2>
+      <p class="panel-desc">Get detailed, actionable feedback on your resume with specific suggestions to make it stand out to recruiters and hiring managers.</p>
+    </div>
+
+    <div class="form-group">
+      <label for="resume-text">Your Resume</label>
+      <textarea id="resume-text" placeholder="Paste your resume content here — work experience, education, skills, and all sections..." style="min-height:200px"></textarea>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="resume-job-title">Target Job Title <span style="font-weight:400;color:var(--text-muted)">(optional)</span></label>
+        <input type="text" id="resume-job-title" placeholder="e.g. Senior Product Manager">
+      </div>
+      <div class="form-group">
+        <label for="resume-industry">Industry <span style="font-weight:400;color:var(--text-muted)">(optional)</span></label>
+        <input type="text" id="resume-industry" placeholder="e.g. Fintech, Healthcare, SaaS">
+      </div>
+    </div>
+
+    <button class="submit-btn" id="resume-submit">
+      <span>Analyze My Resume</span> <span>→</span>
+    </button>
+
+    <div class="error-message" id="resume-error"></div>
+
+    <div class="output-section" id="resume-output-section">
+      <div class="output-header">
+        <span class="output-label">AI Analysis</span>
+        <button class="copy-btn" id="resume-copy">📋 Copy</button>
+      </div>
+      <div class="output-content" id="resume-output"></div>
+    </div>
+  </div>
+
+  <!-- ── Cover Letter ── -->
+  <div class="panel" id="panel-cover-letter" role="tabpanel">
+    <div class="panel-header">
+      <h2 class="panel-title">Cover Letter Generator</h2>
+      <p class="panel-desc">Create a personalized, compelling cover letter tailored to the specific job — no generic templates, no filler.</p>
+    </div>
+
+    <div class="form-group">
+      <label for="cl-job-desc">Job Description</label>
+      <textarea id="cl-job-desc" placeholder="Paste the full job description, including requirements, responsibilities, and any company information..."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="cl-background">Your Background &amp; Experience</label>
+      <textarea id="cl-background" placeholder="Share your relevant experience, key achievements, and skills you'd like highlighted in the letter..."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="cl-tone">Tone <span style="font-weight:400;color:var(--text-muted)">(optional)</span></label>
+      <input type="text" id="cl-tone" placeholder="e.g. Confident and concise, Warm and enthusiastic, Formal">
+    </div>
+
+    <button class="submit-btn" id="cl-submit">
+      <span>Generate Cover Letter</span> <span>→</span>
+    </button>
+
+    <div class="error-message" id="cl-error"></div>
+
+    <div class="output-section" id="cl-output-section">
+      <div class="output-header">
+        <span class="output-label">Generated Cover Letter</span>
+        <button class="copy-btn" id="cl-copy">📋 Copy</button>
+      </div>
+      <div class="output-content" id="cl-output"></div>
+    </div>
+  </div>
+
+  <!-- ── Interview Prep ── -->
+  <div class="panel" id="panel-interview" role="tabpanel">
+    <div class="panel-header">
+      <h2 class="panel-title">Interview Preparation</h2>
+      <p class="panel-desc">Get a tailored set of interview questions with guidance on strong answers — specific to your role, not generic advice.</p>
+    </div>
+
+    <div class="form-group">
+      <label for="int-job-title">Job Title</label>
+      <input type="text" id="int-job-title" placeholder="e.g. Software Engineer, Marketing Manager, Data Scientist">
+    </div>
+
+    <div class="form-group">
+      <label for="int-job-desc">Job Description or Key Requirements</label>
+      <textarea id="int-job-desc" placeholder="Paste the job description or describe the key responsibilities and skills required..."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="int-background">Your Background <span style="font-weight:400;color:var(--text-muted)">(optional)</span></label>
+      <textarea id="int-background" style="min-height:110px" placeholder="Brief overview of your experience so questions can be personalized to your background..."></textarea>
+    </div>
+
+    <button class="submit-btn" id="int-submit">
+      <span>Generate Interview Prep</span> <span>→</span>
+    </button>
+
+    <div class="error-message" id="int-error"></div>
+
+    <div class="output-section" id="int-output-section">
+      <div class="output-header">
+        <span class="output-label">Interview Preparation Guide</span>
+        <button class="copy-btn" id="int-copy">📋 Copy</button>
+      </div>
+      <div class="output-content" id="int-output"></div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <p>AI Career Copilot · Powered by Claude AI</p>
+</footer>
+
+<script>
+  // ── Tab switching ──
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.remove('active')
+        b.setAttribute('aria-selected', 'false')
+      })
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'))
+      btn.classList.add('active')
+      btn.setAttribute('aria-selected', 'true')
+      document.getElementById('panel-' + btn.dataset.panel).classList.add('active')
+    })
+  })
+
+  // ── Streaming fetch ──
+  async function streamRequest(mode, payload, outputEl, sectionEl, errorEl, btn) {
+    errorEl.classList.remove('visible')
+    outputEl.textContent = ''
+    sectionEl.classList.add('visible')
+    outputEl.classList.add('streaming')
+
+    const origHTML = btn.innerHTML
+    btn.disabled = true
+    btn.innerHTML = '<div class="spinner"></div><span>Generating…</span>'
+
+    try {
+      const res = await fetch('/api/career-assist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mode, ...payload }),
+      })
+
+      if (!res.ok) {
+        const msg = await res.text()
+        throw new Error(msg || 'Something went wrong. Please try again.')
+      }
+
+      const reader = res.body.getReader()
+      const decoder = new TextDecoder()
+      let buffer = ''
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+        buffer += decoder.decode(value, { stream: true })
+        outputEl.textContent = buffer
+        outputEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+      }
+    } catch (err) {
+      sectionEl.classList.remove('visible')
+      errorEl.textContent = err.message || 'An unexpected error occurred.'
+      errorEl.classList.add('visible')
+    } finally {
+      btn.disabled = false
+      btn.innerHTML = origHTML
+      outputEl.classList.remove('streaming')
+    }
+  }
+
+  // ── Copy helper ──
+  function setupCopy(copyId, outputId) {
+    document.getElementById(copyId).addEventListener('click', async () => {
+      const text = document.getElementById(outputId).textContent.trim()
+      if (!text) return
+      try {
+        await navigator.clipboard.writeText(text)
+        const btn = document.getElementById(copyId)
+        btn.classList.add('copied')
+        btn.textContent = '✓ Copied!'
+        setTimeout(() => {
+          btn.classList.remove('copied')
+          btn.textContent = '📋 Copy'
+        }, 2200)
+      } catch (_) {}
+    })
+  }
+
+  setupCopy('resume-copy', 'resume-output')
+  setupCopy('cl-copy', 'cl-output')
+  setupCopy('int-copy', 'int-output')
+
+  // ── Resume submit ──
+  document.getElementById('resume-submit').addEventListener('click', () => {
+    const text = document.getElementById('resume-text').value.trim()
+    const err = document.getElementById('resume-error')
+    if (!text) {
+      err.textContent = 'Please paste your resume content before analyzing.'
+      err.classList.add('visible')
+      return
+    }
+    streamRequest(
+      'resume',
+      {
+        resumeText: text,
+        jobTitle: document.getElementById('resume-job-title').value.trim(),
+        industry: document.getElementById('resume-industry').value.trim(),
+      },
+      document.getElementById('resume-output'),
+      document.getElementById('resume-output-section'),
+      err,
+      document.getElementById('resume-submit'),
+    )
+  })
+
+  // ── Cover letter submit ──
+  document.getElementById('cl-submit').addEventListener('click', () => {
+    const jobDesc = document.getElementById('cl-job-desc').value.trim()
+    const background = document.getElementById('cl-background').value.trim()
+    const err = document.getElementById('cl-error')
+    if (!jobDesc || !background) {
+      err.textContent = 'Please fill in both the job description and your background.'
+      err.classList.add('visible')
+      return
+    }
+    streamRequest(
+      'cover-letter',
+      {
+        jobDescription: jobDesc,
+        background,
+        tone: document.getElementById('cl-tone').value.trim(),
+      },
+      document.getElementById('cl-output'),
+      document.getElementById('cl-output-section'),
+      err,
+      document.getElementById('cl-submit'),
+    )
+  })
+
+  // ── Interview submit ──
+  document.getElementById('int-submit').addEventListener('click', () => {
+    const jobTitle = document.getElementById('int-job-title').value.trim()
+    const jobDesc = document.getElementById('int-job-desc').value.trim()
+    const err = document.getElementById('int-error')
+    if (!jobTitle || !jobDesc) {
+      err.textContent = 'Please provide the job title and job description.'
+      err.classList.add('visible')
+      return
+    }
+    streamRequest(
+      'interview',
+      {
+        jobTitle,
+        jobDescription: jobDesc,
+        background: document.getElementById('int-background').value.trim(),
+      },
+      document.getElementById('int-output'),
+      document.getElementById('int-output-section'),
+      err,
+      document.getElementById('int-submit'),
+    )
+  })
+</script>
+
+</body>
+</html>
